@@ -3,6 +3,7 @@ package aeetech.criptografarsenhausuario.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +18,11 @@ import aeetech.criptografarsenhausuario.repository.UsuarioRepository;
 public class UsuarioController {
 	
 	private final UsuarioRepository repository;
+	private final PasswordEncoder encoder;
 	
-	public UsuarioController(UsuarioRepository repository) {
+	public UsuarioController(UsuarioRepository repository, PasswordEncoder encoder) {
 		this.repository = repository;
+		this.encoder = encoder;
 	}
 	
 	@GetMapping("/listarTodos")
@@ -31,6 +34,7 @@ public class UsuarioController {
 	
 	@PostMapping("/salvar")
 	public ResponseEntity<UsuarioModel> salvar(@RequestBody UsuarioModel usuario){
+		usuario.setPassword(encoder.encode(usuario.getPassword()));
 		return ResponseEntity.ok(repository.save(usuario));
 	}
 
